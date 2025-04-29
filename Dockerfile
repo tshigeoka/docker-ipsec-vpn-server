@@ -38,9 +38,17 @@ RUN set -x \
          bison flex gcc make libc-dev bsd-compat-headers linux-pam-dev \
          nss-dev libcap-ng-dev libevent-dev curl-dev nspr-dev
 
-RUN wget -t 3 -T 30 -nv -O /opt/src/ikev2.sh https://github.com/hwdsl2/setup-ipsec-vpn/raw/1d2588f40bce0084df291319c9c2e4c26e54d6ea/extras/ikev2setup.sh \
-    && chmod +x /opt/src/ikev2.sh \
-    && ln -s /opt/src/ikev2.sh /usr/bin
+#RUN wget -t 3 -T 30 -nv -O /opt/src/ikev2.sh https://github.com/hwdsl2/setup-ipsec-vpn/raw/1d2588f40bce0084df291319c9c2e4c26e54d6ea/extras/ikev2setup.sh \
+#    && chmod +x /opt/src/ikev2.sh \
+#    && ln -s /opt/src/ikev2.sh /usr/bin
+
+COPY ./setup/extras/ikev2setup.sh /opt/src/ikev2.sh
+RUN chmod 755 /opt/src/ikev2.sh
+RUN ln -s /opt/src/ikev2.sh /usr/bin
+
+COPY ./setup/extras/ikev2onlymode.sh /opt/src/ikev2only.sh
+RUN chmod 755 /opt/src/ikev2only.sh
+RUN ln -s /opt/src/ikev2only.sh /usr/bin
 
 COPY ./run.sh /opt/src/run.sh
 RUN chmod 755 /opt/src/run.sh
@@ -50,15 +58,18 @@ CMD ["/opt/src/run.sh"]
 ARG BUILD_DATE
 ARG VERSION
 ARG VCS_REF
+ARG USER_NAME="unknown"
+ARG USER_EMAIL="unknown"
+ARG REPO_URL="unknown"
 ENV IMAGE_VER=$BUILD_DATE
 
-LABEL maintainer="Lin Song <linsongui@gmail.com>" \
+LABEL maintainer="$USER_NAME <$USER_EMAIL>"\
     org.opencontainers.image.created="$BUILD_DATE" \
     org.opencontainers.image.version="$VERSION" \
     org.opencontainers.image.revision="$VCS_REF" \
-    org.opencontainers.image.authors="Lin Song <linsongui@gmail.com>" \
+    org.opencontainers.image.authors="$USER_NAME" \
     org.opencontainers.image.title="IPsec VPN Server on Docker" \
-    org.opencontainers.image.description="Docker image to run an IPsec VPN server, with IPsec/L2TP, Cisco IPsec and IKEv2." \
-    org.opencontainers.image.url="https://github.com/hwdsl2/docker-ipsec-vpn-server" \
-    org.opencontainers.image.source="https://github.com/hwdsl2/docker-ipsec-vpn-server" \
-    org.opencontainers.image.documentation="https://github.com/hwdsl2/docker-ipsec-vpn-server"
+    org.opencontainers.image.description="Fork from hwdsl2/ipsec-vpn-server. Docker image to run an IPsec VPN server, with IPsec/L2TP, Cisco IPsec and IKEv2." \
+    org.opencontainers.image.url="$REPO_URL" \
+    org.opencontainers.image.source="$REPO_URL" \
+    org.opencontainers.image.documentation="$REPO_URL"
