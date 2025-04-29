@@ -1,0 +1,4 @@
+[submodule "setup"]
+	path = setup
+	url = https://github.com/tshigeoka/setup-ipsec-vpn.git
+	branch = dev
