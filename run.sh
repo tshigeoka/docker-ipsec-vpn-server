@@ -65,6 +65,13 @@ os_type=debian
 os_arch=$(uname -m | tr -dc 'A-Za-z0-9_-')
 [ -f /etc/os-release ] && os_type=$(. /etc/os-release && printf '%s' "$ID")
 
+if [ "$os_type" = "alpine" ]; then
+  apk -U upgrade && apk cache clean
+elif [ "$os_type" = "debian" ]; then
+  apt update && apt upgrade
+fi
+
+
 if [ ! -e /dev/ppp ]; then
 cat <<'EOF'
 
